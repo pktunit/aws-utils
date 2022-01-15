@@ -1,0 +1,11 @@
+#!/bin/bash
+
+IP=$(curl --silent https://checkip.amazonaws.com)
+CIDR="${IP}"/32
+
+
+for GROUP in $(aws ec2 describe-security-groups | jq -r '.SecurityGroups[].GroupId')
+  do
+    echo aws ec2 authorize-security-group-ingress --group-id ${GROUP} --ip-permissions IpProtocol=tcp,FromPort=22,ToPort=22,IpRanges=[{CidrIp="${CIDR}"}]
+    aws ec2 authorize-security-group-ingress --group-id ${GROUP} --ip-permissions IpProtocol=tcp,FromPort=22,ToPort=22,IpRanges=[{CidrIp="${CIDR}"}]
+  done

@@ -1,0 +1,14 @@
+#!/bin/bash
+
+IP=$(curl --silent https://checkip.amazonaws.com)
+CIDR="${IP}"/32
+
+
+for GROUP in $(aws ec2 describe-security-groups | jq -r '.SecurityGroups[].GroupId')
+  do
+    for CIDR in $(aws ec2 describe-security-groups --group-ids ${GROUP} | jq -r '.SecurityGroups[].IpPermissions[] | select(.FromPort==22) | .IpRanges[].CidrIp')
+      do
+        echo aws ec2 revoke-security-group-ingress --group-id ${GROUP} --ip-permissions IpProtocol=tcp,FromPort=22,ToPort=22,IpRanges=[{CidrIp="${CIDR}"}]
+        aws ec2 revoke-security-group-ingress --group-id ${GROUP} --ip-permissions IpProtocol=tcp,FromPort=22,ToPort=22,IpRanges=[{CidrIp="${CIDR}"}]
+      done
+  done
