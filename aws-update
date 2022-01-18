@@ -9,7 +9,7 @@ cat > hosts <<EOT
 aws:
   hosts:
 EOT
-aws ec2 describe-instances | jq -r '.Reservations[].Instances[] | "    " + .InstanceId + ":\n      ansible_host: " + .PublicIpAddress' >> hosts
+aws ec2 describe-instances | jq -r '.Reservations[].Instances[] | select(.State.Name=="running") |  "    " + .InstanceId + ":\n      ansible_host: " + .PublicIpAddress' >> hosts
 
 cat >> hosts <<EOT
   vars:
