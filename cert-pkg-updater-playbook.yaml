@@ -10,7 +10,8 @@
       name: "*"
       state: latest
   - name: Renew SSL Certificates
-    ansible.builtin.command:
+    #ansible.builtin.command:
+    command:
       cmd: certbot renew
   - name: Restart Nginx
     ansible.builtin.systemd:
