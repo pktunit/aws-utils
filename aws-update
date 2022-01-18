@@ -27,6 +27,15 @@ for GROUP in $(aws ec2 describe-security-groups | jq -r '.SecurityGroups[].Group
     aws ec2 authorize-security-group-ingress --group-id ${GROUP} --ip-permissions IpProtocol=tcp,FromPort=22,ToPort=22,IpRanges=[{CidrIp="${CIDR}"}];
   done
 
+# Start ssh-agent and ssh-add key so that you are not prompted for password multiple times
+if ps -p $SSH_AGENT_PID > /dev/null
+  then
+    echo "ssh-agent is already running"
+  else
+    eval $(ssh-agent)
+fi
+ssh-add ~/.ssh/aws_rsa
+
 # Run Ansible Playbook
 ansible-playbook cert-pkg-updater-playbook.yaml
 
