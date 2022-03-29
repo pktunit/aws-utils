@@ -1,0 +1,15 @@
+---
+ - name: Install and Run stress-ng
+   hosts: aws
+   become: yes
+   become_user: root
+
+   tasks:
+   - name: Install stress-ng
+     yum:
+       name: "stress-ng"
+       state: latest
+   - name: Run stress-ng
+     #ansible.builtin.command:
+     command:
+       cmd: stress-ng --cpu 2 --timeout 300s
